@@ -1,3 +1,3 @@
-# Thesis - Suicide Ideation Analysis and Monitoring System - Web and Mobile
+# Thesis - Suicide Ideation Analysis and Monitoring - Web, Mobile and Desktop
 
-Vue 3 + TypeScript, Vuetify, FormKit, Pinia, Supabase and Groq
+Vue 3 + TypeScript, Vuetify, ApexCharts, Pinia, Supabase and Groq
