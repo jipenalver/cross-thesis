@@ -1,74 +1,55 @@
 <script setup lang="ts">
 import logoLogin from '@/assets/images/logo-login.png'
-import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
-const isPasswordVisible = ref(false)
+const { mobile } = useDisplay()
 </script>
 
 <template>
   <v-img class="mx-auto my-6" max-width="228" :src="logoLogin"></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
-    <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+    <v-card-text>
+      <h1 class="text-center text-success">CSU Student Portal</h1>
 
-    <v-text-field
-      density="compact"
-      placeholder="Email address"
-      prepend-inner-icon="mdi-email-outline"
-      variant="outlined"
-    ></v-text-field>
+      <v-divider class="my-5" thickness="2"></v-divider>
 
-    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-      Password
-
-      <a
-        class="text-caption text-decoration-none text-success"
-        href="#"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Forgot login password?</a
-      >
-    </div>
-
-    <v-text-field
-      :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
-      :type="isPasswordVisible ? 'text' : 'password'"
-      density="compact"
-      placeholder="Enter your password"
-      prepend-inner-icon="mdi-lock-outline"
-      variant="outlined"
-      @click:append-inner="isPasswordVisible = !isPasswordVisible"
-    ></v-text-field>
-
-    <v-card class="mb-12" color="surface-variant" variant="tonal">
-      <v-card-text class="text-medium-emphasis text-caption">
-        Warning: After 3 consecutive failed login attempts, you account will be temporarily locked
-        for three hours. If you must login now, you can also click "Forgot login password?" below to
-        reset the login password.
-      </v-card-text>
-    </v-card>
+      <div class="text-subtitle-1 text-medium-emphasis text-center">
+        To Proceed, Please Login with your Facebook Account
+      </div>
+    </v-card-text>
 
     <v-btn
-      class="mb-8"
+      class="font-weight-bold"
       prepend-icon="mdi-facebook"
       color="success"
+      variant="elevated"
       size="large"
-      variant="tonal"
       block
     >
-      Log In with Facebook
+      Login with
+      <br v-if="mobile" />
+      Facebook
     </v-btn>
 
-    <v-card-text class="text-center">
-      <a
-        class="text-success text-decoration-none"
-        href="#"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
-      </a>
+    <v-card-text class="mt-8 text-center">
+      <span>Don't have account yet?</span>
+
+      <br v-if="mobile" />
+
+      <RouterLink class="text-success text-decoration-none font-weight-bold" to="/register">
+        Sign Up now <v-icon icon="mdi-chevron-right"></v-icon>
+      </RouterLink>
     </v-card-text>
+
+    <section v-if="!mobile">
+      <v-divider class="my-5" thickness="2"></v-divider>
+
+      <v-card-text class="text-center">
+        <RouterLink class="text-success text-decoration-none font-weight-bold" to="/admin/login">
+          Login as Admin <v-icon icon="mdi-account-wrench" size="small"></v-icon>
+        </RouterLink>
+      </v-card-text>
+    </section>
   </v-card>
 </template>

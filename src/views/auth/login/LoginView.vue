@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/components/layout/AppLayout.vue'
-import bgCsu from '@/assets/images/bg-csu.png'
 import LoginForm from './partials/LoginForm.vue'
+import bgCsu from '@/assets/images/bg-csu.png'
 </script>
 
 <template>

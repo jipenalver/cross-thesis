@@ -36,7 +36,7 @@ function onClick() {
         <slot name="content"></slot>
       </v-main>
 
-      <v-footer border app>
+      <v-footer class="d-flex justify-center" border app>
         <span class="font-weight-bold" :class="mobile ? 'text-caption' : ''">
           Copyright © 2024 - SIAM - CSU | All Rights Reserved
         </span>
