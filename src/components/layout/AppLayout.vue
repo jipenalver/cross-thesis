@@ -5,10 +5,11 @@ import { ref } from 'vue'
 
 const { mobile } = useDisplay()
 
-const theme = ref('light')
+const theme = ref(localStorage.getItem('theme') ?? 'light')
 
-function onClick() {
+function onToggleTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+  localStorage.setItem('theme', theme.value)
 }
 </script>
 
@@ -28,7 +29,7 @@ function onClick() {
           :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
           variant="elevated"
           slim
-          @click="onClick"
+          @click="onToggleTheme"
         ></v-btn>
       </v-app-bar>
 
