@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/components/layout/AppLayout.vue'
-import LoginForm from './partials/LoginForm.vue'
+import RegisterForm from './partials/RegisterForm.vue'
 import bgCsu from '@/assets/images/bg-csu.png'
 </script>
 
@@ -11,7 +11,7 @@ import bgCsu from '@/assets/images/bg-csu.png'
         <v-container fluid>
           <v-row>
             <v-col cols="12">
-              <LoginForm></LoginForm>
+              <RegisterForm></RegisterForm>
             </v-col>
           </v-row>
         </v-container>
