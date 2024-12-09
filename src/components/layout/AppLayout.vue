@@ -23,8 +23,6 @@ function onToggleTheme() {
           <span class="font-weight-black">SIAM Analytics</span>
         </v-app-bar-title>
 
-        <v-spacer></v-spacer>
-
         <v-btn
           :icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
           variant="elevated"
