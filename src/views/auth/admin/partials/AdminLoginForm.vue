@@ -1,14 +1,37 @@
 <script setup lang="ts">
+import { emailValidator, requiredValidator } from '@/utils/validators'
+import { formActionDefault } from '@/utils/helpers/form'
+import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { mobile } = useDisplay()
 
+const formDataDefault = {
+  email: '',
+  password: '',
+}
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
 const isPasswordVisible = ref(false)
+const refVForm = ref()
+
+const onSubmit = async () => {}
+
+const onFormSubmit = () => {
+  const isValid = refVForm.value?.validate()
+  if (isValid) onSubmit()
+}
 </script>
 
 <template>
+  <AppAlert
+    v-model:is-alert-visible="formAction.formAlert"
+    :form-message="formAction.formMessage"
+    :form-status="formAction.formStatus"
+  ></AppAlert>
+
   <v-img class="mx-auto my-6" max-width="228" :src="logoLogin"></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
@@ -18,18 +41,21 @@ const isPasswordVisible = ref(false)
       <v-divider class="my-5" thickness="2"></v-divider>
     </v-card-text>
 
-    <v-form>
+    <v-form ref="refVForm" @submit.prevent="onFormSubmit">
       <v-text-field
-        class="mt-3"
+        v-model="formData.email"
+        class="my-3"
         density="compact"
         placeholder="jdoe@carsu.edu.ph"
         label="Email Address"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
+        :rules="[requiredValidator, emailValidator]"
       ></v-text-field>
 
       <v-text-field
-        class="mt-3"
+        v-model="formData.password"
+        class="my-3"
         :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="isPasswordVisible ? 'text' : 'password'"
         density="compact"
@@ -38,9 +64,11 @@ const isPasswordVisible = ref(false)
         prepend-inner-icon="mdi-lock-outline"
         variant="outlined"
         @click:append-inner="isPasswordVisible = !isPasswordVisible"
+        :rules="[requiredValidator]"
       ></v-text-field>
 
       <v-btn
+        type="submit"
         class="font-weight-bold"
         prepend-icon="mdi-login"
         color="success"

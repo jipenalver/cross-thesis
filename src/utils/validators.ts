@@ -57,7 +57,7 @@ export const confirmedValidator = (value: string, target: string): string | bool
   value === target || 'The Confirm Password field confirmation does not match'
 
 // 👉 Between Validator
-export const betweenValidator = (value: number, min: number, max: number) => {
+export const betweenValidator = (value: string, min: number, max: number) => {
   const valueAsNumber = Number(value)
 
   return (
