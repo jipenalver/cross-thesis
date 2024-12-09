@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { regexValidator, requiredValidator } from '@/utils/validators'
+import { emailValidator, requiredValidator } from '@/utils/validators'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
@@ -9,10 +9,12 @@ import { ref } from 'vue'
 const { mobile } = useDisplay()
 
 const formDataDefault = {
-  student_id_no: '',
+  email: '',
+  password: '',
 }
 const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
+const isPasswordVisible = ref(false)
 const refVForm = ref()
 
 const onSubmit = async () => {}
@@ -34,45 +36,52 @@ const onFormSubmit = () => {
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
     <v-card-text>
-      <h1 class="text-center text-success">CSU Student Portal Registration</h1>
+      <h1 class="text-center text-success">Guidance Office Admin</h1>
 
       <v-divider class="my-5" thickness="2"></v-divider>
-
-      <div class="text-subtitle-1 text-medium-emphasis text-center">
-        To Proceed, Please Sign Up with your Facebook Account
-      </div>
     </v-card-text>
 
     <v-form ref="refVForm" @submit.prevent="onFormSubmit">
       <v-text-field
-        v-model="formData.student_id_no"
+        v-model="formData.email"
         class="my-3"
         density="compact"
-        label="Student ID Number"
-        placeholder="###-#####"
+        placeholder="jdoe@carsu.edu.ph"
+        label="Email Address"
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
-        autofocus
-        :rules="[requiredValidator, regexValidator(formData.student_id_no, /^\d{3}-\d{5}$/)]"
+        :rules="[requiredValidator, emailValidator]"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="formData.password"
+        class="my-3"
+        :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+        :type="isPasswordVisible ? 'text' : 'password'"
+        density="compact"
+        placeholder="Password"
+        label="Password"
+        prepend-inner-icon="mdi-lock-outline"
+        variant="outlined"
+        @click:append-inner="isPasswordVisible = !isPasswordVisible"
+        :rules="[requiredValidator]"
       ></v-text-field>
 
       <v-btn
         type="submit"
         class="font-weight-bold"
-        prepend-icon="mdi-facebook"
+        prepend-icon="mdi-login"
         color="success"
         variant="elevated"
         size="large"
         block
       >
-        Sign Up with
-        <br v-if="mobile" />
-        Facebook
+        Login
       </v-btn>
     </v-form>
 
     <v-card-text class="mt-8 text-center">
-      <span>Already have account?</span>
+      <span>Are you a student?</span>
 
       <br v-if="mobile" />
 
