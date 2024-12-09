@@ -5,6 +5,9 @@ import { supabase } from '@/utils/supabase'
 interface User {
   id: string
   email?: string
+  firstname?: string
+  lastname?: string
+  middlename?: string
   user_role?: string
   is_admin?: boolean
   image_url?: string

@@ -1,5 +1,8 @@
 // 👉 Table Pagination
-export type sortBy = { key: string; order?: boolean | 'asc' | 'desc' }
+export interface sortBy {
+  key: string
+  order?: boolean | 'asc' | 'desc'
+}
 
 // 👉 Table Pagination
 export const tablePagination = (
