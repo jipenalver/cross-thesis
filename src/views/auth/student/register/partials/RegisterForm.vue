@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { regexValidator, requiredValidator } from '@/utils/validators'
+import { facebookID, initializeFacebookSdk } from '@/utils/facebook'
 import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
-import { facebookID, initializeFacebookSdk } from '@/utils/facebook'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 

@@ -2,11 +2,12 @@
 export const facebookID = import.meta.env.VITE_FACEBOOK_ID
 
 // 👉 Retrieve Facebook Init
-export const initializeFacebookSdk = () => {
+export const initializeFacebookSdk = (): Promise<void> => {
   return new Promise<void>((resolve) => {
+    // Initialize fbAsyncInit
     window.fbAsyncInit = function () {
       FB.init({
-        appId: import.meta.env.VITE_FACEBOOK_ID,
+        appId: import.meta.env.VITE_FACEBOOK_ID, // Ensure this matches your .env variable
         xfbml: true,
         version: 'v21.0',
       })
@@ -16,13 +17,12 @@ export const initializeFacebookSdk = () => {
 
     // Load the Facebook SDK script
     ;(function (d, s, id) {
-      let js,
-        fjs = d.getElementsByTagName(s)[0]
+      const js = d.createElement(s) as HTMLScriptElement
+      const fjs = d.getElementsByTagName(s)[0]
       if (d.getElementById(id)) return
-      js = d.createElement(s)
       js.id = id
       js.src = 'https://connect.facebook.net/en_US/sdk.js'
-      fjs.parentNode.insertBefore(js, fjs)
+      fjs.parentNode?.insertBefore(js, fjs)
     })(document, 'script', 'facebook-jssdk')
   })
 }
