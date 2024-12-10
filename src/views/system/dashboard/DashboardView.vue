@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import StudentGraph from './partials/StudentGraph.vue'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -18,7 +19,9 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     <template #content>
       <v-container fluid>
         <v-row>
-          <v-col cols="12"> </v-col>
+          <v-col cols="12">
+            <StudentGraph></StudentGraph>
+          </v-col>
         </v-row>
       </v-container>
     </template>

@@ -63,7 +63,6 @@ const onConfirmDelete = async () => {
   onLoadItems(tableOptions.value)
 }
 
-// Load Tables Data
 const onLoadItems = async ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
   tableOptions.value.isLoading = true
 
