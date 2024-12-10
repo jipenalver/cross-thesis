@@ -18,8 +18,9 @@ const refVForm = ref()
 const onSubmit = async () => {}
 
 const onFormSubmit = () => {
-  const isValid = refVForm.value?.validate()
-  if (isValid) onSubmit()
+  refVForm.value?.validate().then(({ valid }: { valid: boolean }) => {
+    if (valid) onSubmit()
+  })
 }
 </script>
 

@@ -1,5 +1,12 @@
+interface FormAction {
+  formProcess: boolean
+  formAlert: boolean
+  formStatus: number | undefined
+  formMessage: string
+}
+
 // 👉 Form Action utils
-export const formActionDefault = {
+export const formActionDefault: FormAction = {
   formProcess: false,
   formAlert: false,
   formStatus: 200,

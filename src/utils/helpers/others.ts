@@ -8,7 +8,7 @@ export const getAvatarText = (name: string) => {
 }
 
 // 👉 Slug Name
-export const getSlugText = (name: string): string => {
+export const getSlugText = (name: string) => {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
@@ -18,7 +18,7 @@ export const getSlugText = (name: string): string => {
 }
 
 // 👉 Money Format Text
-export const getMoneyText = (value: number): string => {
+export const getMoneyText = (value: number) => {
   if (isNaN(value)) return '₱0.00'
 
   return new Intl.NumberFormat('en-PH', {
@@ -35,7 +35,7 @@ export const getPreciseNumber = (value: number): number => {
 }
 
 // 👉 Alpha-numeric Random Code
-export const getRandomCode = (length = 6): string => {
+export const getRandomCode = (length = 6) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
   return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join(
@@ -44,7 +44,7 @@ export const getRandomCode = (length = 6): string => {
 }
 
 // 👉 Pad String Left
-export const getPadLeftText = (value: string | number, length = 4, char = '0'): string => {
+export const getPadLeftText = (value: string | number, length = 4, char = '0') => {
   value = String(value)
   if (value.length >= length) return value
   return char.repeat(length - value.length) + value
@@ -124,7 +124,7 @@ export const dateShiftFixForm = (formData: object, dateColumns = []) => {
 }
 
 // 👉 Fix v-date-input datetime shift issue for value
-export const dateShiftFixValue = (date: Date): string => {
+export const dateShiftFixValue = (date: Date) => {
   return date.toLocaleDateString()
 }
 
@@ -148,7 +148,7 @@ export const generateCSV = (filename: string, csvData: string) => {
 }
 
 // 👉 CSV Text Trimming
-export const generateCSVTrim = (string: string): string => {
+export const generateCSVTrim = (string: string) => {
   if (typeof string !== 'string' || !string.trim()) return ''
 
   return string.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()

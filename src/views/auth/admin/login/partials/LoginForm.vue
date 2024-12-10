@@ -3,10 +3,13 @@ import { emailValidator, requiredValidator } from '@/utils/validators'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
+import { supabase } from '@/utils/supabase'
+import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { mobile } = useDisplay()
+const router = useRouter()
 
 const formDataDefault = {
   email: '',
@@ -17,11 +20,32 @@ const formAction = ref({ ...formActionDefault })
 const isPasswordVisible = ref(false)
 const refVForm = ref()
 
-const onSubmit = async () => {}
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: formData.value.email,
+    password: formData.value.password,
+  })
+
+  if (error) {
+    formAction.value.formMessage = error.message
+    formAction.value.formStatus = error.status
+    formAction.value.formAlert = true
+  } else if (data) {
+    formAction.value.formMessage = 'Successfully Logged Account.'
+    formAction.value.formAlert = true
+    router.replace('/dashboard')
+  }
+
+  refVForm.value?.reset()
+  formAction.value.formProcess = false
+}
 
 const onFormSubmit = () => {
-  const isValid = refVForm.value?.validate()
-  if (isValid) onSubmit()
+  refVForm.value?.validate().then(({ valid }: { valid: boolean }) => {
+    if (valid) onSubmit()
+  })
 }
 </script>
 
@@ -75,6 +99,8 @@ const onFormSubmit = () => {
         variant="elevated"
         size="large"
         block
+        :disabled="formAction.formProcess"
+        :loading="formAction.formProcess"
       >
         Login
       </v-btn>

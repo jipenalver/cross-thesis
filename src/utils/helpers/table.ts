@@ -27,6 +27,6 @@ export const tablePagination = (
 }
 
 // 👉 Handle Search if null turn to empty string
-export const tableSearch = (search: string | null | undefined): string => {
+export const tableSearch = (search: string | null | undefined) => {
   return search || ''
 }
