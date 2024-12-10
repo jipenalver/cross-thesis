@@ -4,9 +4,9 @@ import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
-import { facebookID } from '@/utils/facebook'
+import { facebookID, initializeFacebookSdk } from '@/utils/facebook'
 import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
 
@@ -37,6 +37,12 @@ const onFormSubmit = () => {
     if (valid) onSubmit()
   })
 }
+
+onMounted(() => {
+  initializeFacebookSdk().then(() => {
+    console.log('Facebook SDK initialized.')
+  })
+})
 </script>
 
 <template>
