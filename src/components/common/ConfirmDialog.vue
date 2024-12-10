@@ -33,7 +33,7 @@ const onClose = () => {
 
         <v-btn
           prepend-icon="mdi-thumb-up"
-          color="red-darken-4"
+          color="green-darken-4"
           variant="elevated"
           @click="onConfirm"
         >

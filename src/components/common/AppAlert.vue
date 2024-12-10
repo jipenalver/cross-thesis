@@ -4,7 +4,7 @@ import { watch } from 'vue'
 const props = defineProps<{
   isAlertVisible: boolean
   formMessage?: string
-  formStatus: number
+  formStatus: number | undefined
 }>()
 
 const emit = defineEmits(['update:isAlertVisible'])
@@ -27,9 +27,10 @@ const onClose = () => {
   <v-snackbar
     :model-value="props.isAlertVisible"
     :timeout="10000"
-    :color="formStatus >= 400 ? 'error' : formStatus >= 200 ? 'success' : undefined"
+    :color="formStatus >= 400 ? 'error' : formStatus && formStatus >= 200 ? 'success' : undefined"
     multi-line
   >
+    <v-icon class="me-1" icon="mdi-information"></v-icon>
     {{ formMessage }}
 
     <template #actions>

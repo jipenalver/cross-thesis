@@ -1,9 +1,12 @@
-// 👉 Table Pagination
-export type sortBy = { key: string; order?: boolean | 'asc' | 'desc' }
+// 👉 SortBy Interface
+export interface SortBy {
+  key: string
+  order?: boolean | 'asc' | 'desc'
+}
 
 // 👉 Table Pagination
 export const tablePagination = (
-  { page, itemsPerPage, sortBy }: { page: number; itemsPerPage: number; sortBy: sortBy[] },
+  { page, itemsPerPage, sortBy }: { page: number; itemsPerPage: number; sortBy: SortBy[] },
   defaultColumn = 'id',
   isAscending = true,
 ) => {
@@ -24,6 +27,6 @@ export const tablePagination = (
 }
 
 // 👉 Handle Search if null turn to empty string
-export const tableSearch = (search: string | null | undefined): string => {
+export const tableSearch = (search: string | null | undefined) => {
   return search || ''
 }

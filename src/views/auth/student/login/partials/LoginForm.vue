@@ -37,7 +37,7 @@ const { mobile } = useDisplay()
 
       <br v-if="mobile" />
 
-      <RouterLink class="text-success text-decoration-none font-weight-bold" to="/register">
+      <RouterLink class="text-success text-decoration-none font-weight-bold" to="/student/register">
         Sign Up now <v-icon icon="mdi-chevron-right"></v-icon>
       </RouterLink>
     </v-card-text>

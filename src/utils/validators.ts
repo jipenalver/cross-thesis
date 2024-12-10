@@ -1,26 +1,26 @@
 // 👉 IsEmpty
-export const isEmpty = (value: null | undefined | string): boolean => {
+export const isEmpty = (value: null | undefined | string) => {
   if (value === null || value === undefined || value === '') return true
 
   return !!(Array.isArray(value) && value.length === 0)
 }
 
 // 👉 IsNullOrUndefined
-export const isNullOrUndefined = (value: unknown): boolean => {
+export const isNullOrUndefined = (value: unknown) => {
   return value === null || value === undefined
 }
 
 // 👉 IsEmptyArray
-export const isEmptyArray = (arr: unknown): boolean => {
+export const isEmptyArray = (arr: unknown) => {
   return Array.isArray(arr) && arr.length === 0
 }
 
 // 👉 IsObject
-export const isObject = (obj: unknown): boolean =>
+export const isObject = (obj: unknown) =>
   obj !== null && !!obj && typeof obj === 'object' && !Array.isArray(obj)
 
 // 👉 Required Validator
-export const requiredValidator = (value: unknown): string | boolean => {
+export const requiredValidator = (value: unknown) => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
     return 'This field is required'
 
@@ -28,7 +28,7 @@ export const requiredValidator = (value: unknown): string | boolean => {
 }
 
 // 👉 Email Validator
-export const emailValidator = (value: string): string | boolean => {
+export const emailValidator = (value: string) => {
   if (isEmpty(value)) return true
 
   const re =
@@ -42,7 +42,7 @@ export const emailValidator = (value: string): string | boolean => {
 }
 
 // 👉 Password Validator
-export const passwordValidator = (password: string): string | boolean => {
+export const passwordValidator = (password: string) => {
   const regExp = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/
   const validPassword = regExp.test(password)
 
@@ -53,7 +53,7 @@ export const passwordValidator = (password: string): string | boolean => {
 }
 
 // 👉 Confirm Password Validator
-export const confirmedValidator = (value: string, target: string): string | boolean =>
+export const confirmedValidator = (value: string, target: string) =>
   value === target || 'The Confirm Password field confirmation does not match'
 
 // 👉 Between Validator
@@ -67,7 +67,7 @@ export const betweenValidator = (value: string, min: number, max: number) => {
 }
 
 // 👉 Integer Validator
-export const integerValidator = (value: string): string | boolean => {
+export const integerValidator = (value: string) => {
   if (isEmpty(value)) return true
 
   if (Array.isArray(value))
@@ -89,14 +89,14 @@ export const regexValidator = (value: string, regex: RegExp): string | boolean =
 }
 
 // 👉 Alpha Validator
-export const alphaValidator = (value: string): string | boolean => {
+export const alphaValidator = (value: string) => {
   if (isEmpty(value)) return true
 
   return /^[A-Z]*$/i.test(String(value)) || 'The Alpha field may only contain alphabetic characters'
 }
 
 // 👉 URL Validator
-export const urlValidator = (value: string): string | boolean => {
+export const urlValidator = (value: string) => {
   if (isEmpty(value)) return true
 
   const re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}[.]{0,1}/
@@ -105,7 +105,7 @@ export const urlValidator = (value: string): string | boolean => {
 }
 
 // 👉 Length Validator
-export const lengthValidator = (value: string, length: number): string | boolean => {
+export const lengthValidator = (value: string, length: number) => {
   if (isEmpty(value)) return true
 
   return (
@@ -115,7 +115,7 @@ export const lengthValidator = (value: string, length: number): string | boolean
 }
 
 // 👉 Alpha-dash Validator
-export const alphaDashValidator = (value: string): string | boolean => {
+export const alphaDashValidator = (value: string) => {
   if (isEmpty(value)) return true
 
   const valueAsString = String(value)
@@ -127,7 +127,7 @@ export const alphaDashValidator = (value: string): string | boolean => {
 }
 
 // 👉 Image Validator
-export const imageValidator = (value: FileList): string | boolean => {
+export const imageValidator = (value: FileList) => {
   if (!value || value.length === 0) return true
 
   return value[0].size < 2000000 || 'Image size should be less than 2 MB'
