@@ -52,7 +52,7 @@ onMounted(() => {
     :persistent="mobile"
     :temporary="mobile"
     :permanent="!mobile"
-    :width="325"
+    :width="275"
     expand-on-hover
     rail
   >

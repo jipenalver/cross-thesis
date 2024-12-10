@@ -15,10 +15,6 @@ interface User {
   phone?: string
 }
 
-interface AuthPage {
-  page: string
-}
-
 export interface ErrorResponse {
   error: AuthError
   data: null
@@ -80,7 +76,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
       .select('*, pages: user_role_pages (page)')
       .eq('user_role', name)
 
-    if (data && data[0]) authPages.value = data[0].pages.map((p: AuthPage) => p.page)
+    if (data && data[0]) authPages.value = data[0].pages.map((p: { page: string }) => p.page)
   }
 
   // Update User Information

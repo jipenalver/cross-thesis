@@ -7,6 +7,8 @@ import StudentRegisterView from '@/views/auth/student/register/StudentRegisterVi
 import AdminLoginView from '@/views/auth/admin/login/AdminLoginView.vue'
 import DashboardView from '@/views/system/dashboard/DashboardView.vue'
 import AccountSettingsView from '@/views/system/account-settings/AccountSettingsView.vue'
+import UserRolesView from '@/views/system/manage-users/UserRolesView.vue'
+import UsersView from '@/views/system/manage-users/UsersView.vue'
 
 export const routes: Array<RouteRecordRaw> = [
   // Auth
@@ -46,6 +48,19 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'account-settings',
     component: AccountSettingsView,
     meta: { requiresAuth: true, isDefault: true },
+  },
+  // Admin Pages
+  {
+    path: '/manage/user/roles',
+    name: 'manage-user-roles',
+    component: UserRolesView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/manage/users',
+    name: 'manage-users',
+    component: UsersView,
+    meta: { requiresAuth: true },
   },
 
   // Errors Pages

@@ -15,12 +15,8 @@ const formDataDefault = {
   email: authStore.userData?.email,
   phone: authStore.userData?.phone,
 }
-const formData = ref({
-  ...formDataDefault,
-})
-const formAction = ref({
-  ...formActionDefault,
-})
+const formData = ref({ ...formDataDefault })
+const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
 
 const onSubmit = async () => {

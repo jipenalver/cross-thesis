@@ -1,0 +1,26 @@
+<script setup lang="ts">
+import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import AppLayout from '@/components/layout/AppLayout.vue'
+import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
+
+const { mobile } = useDisplay()
+
+const isDrawerVisible = ref(mobile.value ? false : true)
+</script>
+
+<template>
+  <AppLayout :is-with-app-bar-icon="true" @is-drawer-visible="isDrawerVisible = !isDrawerVisible">
+    <template #navigation>
+      <SideNavigation v-model:is-drawer-visible="isDrawerVisible"></SideNavigation>
+    </template>
+
+    <template #content>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12"> </v-col>
+        </v-row>
+      </v-container>
+    </template>
+  </AppLayout>
+</template>

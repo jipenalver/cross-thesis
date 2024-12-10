@@ -15,8 +15,8 @@ const formDataDefault = {
 }
 const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
-const refVForm = ref()
 const imgPreview = ref(authStore.userData?.image_url || imgProfile)
+const refVForm = ref()
 
 const onPreview = async (event: Event) => {
   const { fileObject, fileUrl } = await fileExtract(event)
