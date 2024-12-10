@@ -19,7 +19,7 @@ router.beforeEach(async (to) => {
   }
 
   // If logged in, prevent access to login or register pages
-  if (isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+  if (isLoggedIn && (to.name === 'admin-login' || to.name === 'login' || to.name === 'register')) {
     // redirect the user to the dashboard page
     return { name: 'dashboard' }
   }

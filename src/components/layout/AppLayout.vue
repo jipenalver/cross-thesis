@@ -68,7 +68,7 @@ onMounted(() => {
       <slot name="navigation"></slot>
 
       <v-main>
-        <v-img :src="bgCsu" class="h-screen" cover>
+        <v-img :src="bgCsu" class="h-100" cover>
           <slot name="content"></slot>
         </v-img>
       </v-main>
