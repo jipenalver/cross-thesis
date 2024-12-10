@@ -1,6 +1,6 @@
-import LoginView from '@/views/auth/login/LoginView.vue'
-import RegisterView from '@/views/auth/register/RegisterView.vue'
-import AdminLoginView from '@/views/auth/admin/AdminLoginView.vue'
+import StudentLoginView from '@/views/auth/student/login/StudentLoginView.vue'
+import StudentRegisterView from '@/views/auth/student/register/StudentRegisterView.vue'
+import AdminLoginView from '@/views/auth/admin/login/AdminLoginView.vue'
 import AdminDashboardView from '@/views/system/admin/dashboard/AdminDashboardView.vue'
 
 export const routes = [
@@ -8,12 +8,12 @@ export const routes = [
   {
     path: '/',
     name: 'login',
-    component: LoginView,
+    component: StudentLoginView,
   },
   {
-    path: '/register',
+    path: '/student/register',
     name: 'register',
-    component: RegisterView,
+    component: StudentRegisterView,
   },
   {
     path: '/admin/login',
