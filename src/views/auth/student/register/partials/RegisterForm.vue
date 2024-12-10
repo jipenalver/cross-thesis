@@ -97,7 +97,7 @@ onMounted(() => {
         :app-id="facebookID"
         @onSuccess="onSuccess"
         @onFailure="onFailure"
-        scope="email,public_profile,user_posts"
+        scope="email,public_profile"
         fields="id,name,email,first_name,last_name,birthday"
       >
         <span ref="refBtn" @click="fbLogin.initFBLogin"> </span>
