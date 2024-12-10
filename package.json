@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@healerlab/vue3-facebook-login": "^0.1.7",
     "@supabase/supabase-js": "^2.47.2",
     "apexcharts": "^4.1.0",
     "pinia": "^2.2.6",
