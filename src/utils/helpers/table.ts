@@ -1,12 +1,12 @@
-// 👉 Table Pagination
-export interface sortBy {
+// 👉 SortBy Interface
+export interface SortBy {
   key: string
   order?: boolean | 'asc' | 'desc'
 }
 
 // 👉 Table Pagination
 export const tablePagination = (
-  { page, itemsPerPage, sortBy }: { page: number; itemsPerPage: number; sortBy: sortBy[] },
+  { page, itemsPerPage, sortBy }: { page: number; itemsPerPage: number; sortBy: SortBy[] },
   defaultColumn = 'id',
   isAscending = true,
 ) => {

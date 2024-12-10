@@ -3,7 +3,7 @@ import { supabase } from '@/utils/supabase'
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
-interface User {
+interface AuthUser {
   id: string
   email?: string
   firstname?: string
@@ -21,13 +21,13 @@ export interface ErrorResponse {
 }
 
 export interface DataResponse {
-  data: User
+  data: AuthUser
   error?: undefined
 }
 
 export const useAuthUserStore = defineStore('authUser', () => {
   // States
-  const userData = ref<User | null>(null)
+  const userData = ref<AuthUser | null>(null)
   const authPages = ref<string[]>([])
 
   // Getters
@@ -80,7 +80,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
   }
 
   // Update User Information
-  async function updateUserInformation(updatedData: Partial<User>) {
+  async function updateUserInformation(updatedData: Partial<AuthUser>) {
     const { data, error } = await supabase.auth.updateUser({
       data: {
         ...updatedData,

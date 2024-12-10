@@ -33,8 +33,7 @@ const onDelete = (id: number | undefined) => {
 const onConfirmDelete = async () => {
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  deleteId.value = deleteId.value ? deleteId.value : 0
-  const { error } = await userRolesStore.deleteUserRole(deleteId.value)
+  const { error } = await userRolesStore.deleteUserRole(deleteId.value ?? 0)
 
   formAction.value.formProcess = false
 

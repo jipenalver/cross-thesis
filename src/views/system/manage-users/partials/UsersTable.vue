@@ -1,97 +1,84 @@
 <script setup lang="ts">
-import { useUsersStore } from '@/stores/users'
-import AlertNotification from '@/components/common/AlertNotification.vue'
-import UsersFormDialog from './UsersFormDialog.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import { formActionDefault } from '@/utils/helpers/form'
+import AppAlert from '@/components/common/AppAlert.vue'
+import UsersFormDialog from './UsersFormDialog.vue'
+import type { User } from '@supabase/supabase-js'
 import { tableHeaders } from './usersTableUtils'
+import { useUsersStore } from '@/stores/users'
+import type { FormUser } from '@/stores/users'
+import { useDisplay } from 'vuetify'
 import { useDate } from 'vuetify'
 import { ref } from 'vue'
-import { useDisplay } from 'vuetify'
 
-// Utilize pre-defined vue functions
 const date = useDate()
 const { mobile } = useDisplay()
 
-// Use Pinia Store
 const usersStore = useUsersStore()
 
-// Load Variables
 const tableOptions = ref({
   page: 1,
   itemsPerPage: 10,
   sortBy: [],
   isLoading: false,
 })
+const formAction = ref({ ...formActionDefault })
 const isDialogVisible = ref(false)
 const isConfirmDeleteDialog = ref(false)
-const itemData = ref(null)
-const deleteId = ref('')
-const formAction = ref({
-  ...formActionDefault,
-})
+const itemData = ref<FormUser | null>(null)
+const deleteId = ref<string | undefined>('')
 
-// Trigger Update Btn
-const onUpdate = (item) => {
+const onUpdate = (item: Partial<User>) => {
   const { id, email, phone, user_metadata } = item
-
   itemData.value = { id, email, phone, ...user_metadata }
   isDialogVisible.value = true
 }
 
-// Trigger Add Btn
 const onAdd = () => {
   itemData.value = null
   isDialogVisible.value = true
 }
 
-// Trigger Delete Btn
-const onDelete = (id) => {
+const onDelete = (id: string | undefined) => {
   deleteId.value = id
   isConfirmDeleteDialog.value = true
 }
 
-// Confirm Delete
 const onConfirmDelete = async () => {
-  // Reset Form Action utils
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  const { error } = await usersStore.deleteUser(deleteId.value)
+  const { error } = await usersStore.deleteUser(deleteId.value ?? '')
 
-  // Turn off processing
   formAction.value.formProcess = false
 
   if (error) {
-    // Add Error Message and Status Code
-    formAction.value.formErrorMessage = error.message
-    formAction.value.formStatus = error.status
-
+    formAction.value.formMessage = error.message
+    formAction.value.formStatus = 400
+    formAction.value.formAlert = true
     return
   }
 
-  // Add Success Message
-  formAction.value.formSuccessMessage = 'Successfully Deleted User.'
-
-  // Retrieve Data
+  formAction.value.formMessage = 'Successfully Deleted User Role.'
+  formAction.value.formAlert = true
   onLoadItems(tableOptions.value)
 }
 
 // Load Tables Data
-const onLoadItems = async ({ page, itemsPerPage, sortBy }) => {
-  // Trigger Loading
+const onLoadItems = async ({ page, itemsPerPage }: { page: number; itemsPerPage: number }) => {
   tableOptions.value.isLoading = true
 
-  await usersStore.getUsersTable({ page, itemsPerPage, sortBy })
+  await usersStore.getUsersTable({ page, itemsPerPage })
 
-  // Trigger Loading
   tableOptions.value.isLoading = false
 }
 </script>
 
 <template>
-  <AlertNotification
-    :form-success-message="formAction.formSuccessMessage"
-    :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
+  <AppAlert
+    v-model:is-alert-visible="formAction.formAlert"
+    :form-message="formAction.formMessage"
+    :form-status="formAction.formStatus"
+  ></AppAlert>
 
   <v-row>
     <v-col cols="12">
@@ -130,20 +117,16 @@ const onLoadItems = async ({ page, itemsPerPage, sortBy }) => {
 
         <template #item.lastname="{ item }">
           <span class="font-weight-bold">
-            {{ item.user_metadata.lastname }}, {{ item.user_metadata.firstname }}
+            {{ item.user_metadata?.lastname }}, {{ item.user_metadata?.firstname }}
           </span>
         </template>
 
         <template #item.phone="{ item }">
-          {{ item.user_metadata.phone }}
-        </template>
-
-        <template #item.branch="{ item }">
-          {{ item.user_metadata.branch }}
+          {{ item.user_metadata?.phone }}
         </template>
 
         <template #item.user_role="{ item }">
-          {{ item.user_metadata.user_role }}
+          {{ item.user_metadata?.user_role }}
         </template>
 
         <template #item.created_at="{ item }">
@@ -162,7 +145,7 @@ const onLoadItems = async ({ page, itemsPerPage, sortBy }) => {
             <v-btn
               variant="text"
               density="comfortable"
-              :disabled="item.user_metadata.is_admin"
+              :disabled="item.user_metadata?.is_admin"
               @click="onDelete(item.id)"
               icon
             >

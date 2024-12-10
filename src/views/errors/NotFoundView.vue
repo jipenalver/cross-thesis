@@ -12,12 +12,8 @@ const authStore = useAuthUserStore()
 const isLoggedIn = ref(false)
 const isDrawerVisible = ref(mobile.value ? false : true)
 
-const getLoggedStatus = async () => {
+onMounted(async () => {
   isLoggedIn.value = await authStore.isAuthenticated()
-}
-
-onMounted(() => {
-  getLoggedStatus()
 })
 </script>
 

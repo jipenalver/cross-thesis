@@ -17,7 +17,7 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     </template>
 
     <template #content>
-      <v-container>
+      <v-container fluid>
         <v-card class="mb-5">
           <template #title>
             <span class="text-h6 font-weight-bold">

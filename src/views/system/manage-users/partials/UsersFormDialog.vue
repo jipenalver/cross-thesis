@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useBranchesStore } from '@/stores/branches'
+import { emailValidator, passwordValidator, requiredValidator } from '@/utils/validators'
+import { formActionDefault } from '@/utils/helpers/form'
+import AppAlert from '@/components/common/AppAlert.vue'
 import { useUserRolesStore } from '@/stores/userRoles'
 import { useUsersStore } from '@/stores/users'
-import AlertNotification from '@/components/common/AlertNotification.vue'
-import { emailValidator, passwordValidator, requiredValidator } from '@/utils/validators'
-import { formActionDefault } from '@/utils/supabase.js'
 import { onMounted, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 
@@ -12,15 +11,11 @@ const props = defineProps(['isDialogVisible', 'itemData', 'tableOptions'])
 
 const emit = defineEmits(['update:isDialogVisible'])
 
-// Utilize pre-defined vue functions
 const { mdAndDown } = useDisplay()
 
-// Use Pinia Store
-const branchesStore = useBranchesStore()
 const userRolesStore = useUserRolesStore()
 const usersStore = useUsersStore()
 
-// Load Variables
 const formDataDefault = {
   email: '',
   password: '',
@@ -28,7 +23,6 @@ const formDataDefault = {
   middlename: '',
   lastname: '',
   phone: '',
-  branch: null,
   user_role: null,
 }
 const formData = ref({ ...formDataDefault })
@@ -37,71 +31,63 @@ const refVForm = ref()
 const isPasswordVisible = ref(false)
 const isUpdate = ref(false)
 
-// Monitor itemData if it has data
 watch(
   () => props.itemData,
   () => {
     isUpdate.value = props.itemData ? true : false
-    formData.value = props.itemData
-      ? { ...props.itemData, branch: props.itemData.branch.split(',') }
-      : { ...formDataDefault }
+    formData.value = props.itemData ? { ...props.itemData } : { ...formDataDefault }
   },
 )
 
-// Submit Functionality
 const onSubmit = async () => {
-  // Reset Form Action utils
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  // Check if isUpdate is true, then do update, if false do add
   const { data, error } = isUpdate.value
     ? await usersStore.updateUser(formData.value)
     : await usersStore.addUser(formData.value)
 
   if (error) {
-    // Add Error Message and Status Code
-    formAction.value.formErrorMessage = error.message
-    formAction.value.formStatus = error.status
-
-    // Turn off processing
+    formAction.value.formMessage = error.message
+    formAction.value.formStatus = 400
+    formAction.value.formAlert = true
     formAction.value.formProcess = false
   } else if (data) {
-    // Add Success Message
-    formAction.value.formSuccessMessage = isUpdate.value
+    formAction.value.formMessage = isUpdate.value
       ? 'Successfully Updated User Information.'
       : 'Successfully Added User.'
-
+    formAction.value.formAlert = true
     await usersStore.getUsersTable(props.tableOptions)
 
-    // Form Reset and Close Dialog
     setTimeout(() => {
       onFormReset()
     }, 2500)
   }
 }
 
-// Trigger Validators
 const onFormSubmit = () => {
-  refVForm.value?.validate().then(({ valid }) => {
+  refVForm.value?.validate().then(({ valid }: { valid: boolean }) => {
     if (valid) onSubmit()
   })
 }
 
-// Form Reset
 const onFormReset = () => {
   formAction.value = { ...formActionDefault }
   formData.value = { ...formDataDefault }
   emit('update:isDialogVisible', false)
 }
 
-// Load Functions during component rendering
 onMounted(async () => {
-  if (userRolesStore.userRoles.length == 0) await userRolesStore.getUserRoles()
-  if (branchesStore.branches.length == 0) await branchesStore.getBranches()
+  if (userRolesStore.userRoles?.length == 0) await userRolesStore.getUserRoles()
 })
 </script>
 
 <template>
+  <AppAlert
+    v-model:is-alert-visible="formAction.formAlert"
+    :form-message="formAction.formMessage"
+    :form-status="formAction.formStatus"
+  ></AppAlert>
+
   <v-dialog
     :max-width="mdAndDown ? undefined : '800'"
     :model-value="props.isDialogVisible"
@@ -109,11 +95,6 @@ onMounted(async () => {
     persistent
   >
     <v-card prepend-icon="mdi-account" title="User Information">
-      <AlertNotification
-        :form-success-message="formAction.formSuccessMessage"
-        :form-error-message="formAction.formErrorMessage"
-      ></AlertNotification>
-
       <v-form ref="refVForm" @submit.prevent="onFormSubmit">
         <v-card-text>
           <v-row dense>
@@ -137,29 +118,15 @@ onMounted(async () => {
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" sm="6">
+            <v-col cols="12">
               <v-autocomplete
                 v-model="formData.user_role"
                 label="User Role"
-                :items="userRolesStore.userRoles"
+                :items="userRolesStore.userRoles ?? []"
                 item-title="user_role"
                 item-value="user_role"
                 clearable
                 :rules="[requiredValidator]"
-              ></v-autocomplete>
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <v-autocomplete
-                v-model="formData.branch"
-                label="Branch"
-                :items="branchesStore.branches"
-                item-title="name"
-                item-value="name"
-                clearable
-                :rules="[requiredValidator]"
-                multiple
-                chips
               ></v-autocomplete>
             </v-col>
 

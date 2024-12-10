@@ -1,22 +1,22 @@
+import type { User } from '@supabase/supabase-js'
 import { supabaseAdmin } from '@/utils/supabase'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-interface User {
-  id: string
+export interface FormUser {
+  id?: string | undefined
   email?: string
+  password?: string
   firstname?: string
   lastname?: string
   middlename?: string
-  user_role?: string
-  is_admin?: boolean
-  image_url?: string
   phone?: string
+  user_role?: string | null
 }
 
 export const useUsersStore = defineStore('users', () => {
   // States
-  const usersTable = ref<User[]>([])
+  const usersTable = ref<Partial<User>[]>([])
   const usersTotal = ref(0)
 
   // Reset State Action
@@ -27,41 +27,41 @@ export const useUsersStore = defineStore('users', () => {
 
   // Retrieve Users
   async function getUsersTable({ page, itemsPerPage }: { page: number; itemsPerPage: number }) {
-    const { data } = await supabaseAdmin.auth.admin.listUsers({
+    const {
+      data: { users, total },
+    } = (await supabaseAdmin.auth.admin.listUsers({
       page: page,
       perPage: itemsPerPage,
-    })
+    })) as { data: { users: User[]; total: number } }
 
-    console.log(data)
-
-    // Set the retrieved data to state
-    // usersTable.value = users
-    // usersTotal.value = total
+    usersTable.value = users
+    usersTotal.value = total
   }
 
   // Add User
-  async function addUser(formData) {
-    const { password, branch, ...userMetadata } = formData
+  async function addUser(formData: FormUser) {
+    const { email, password, ...userMetadata } = formData
 
     return await supabaseAdmin.auth.admin.createUser({
-      email: formData.email,
+      email: email,
       email_confirm: true,
-      password: formData.password,
-      user_metadata: { ...userMetadata, branch: branch.toString() },
+      password: password,
+      user_metadata: { ...userMetadata },
     })
   }
 
   // Update User
-  async function updateUser(formData) {
-    const { email, password, branch, ...userMetadata } = formData
+  async function updateUser(formData: FormUser) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, email, password, ...userMetadata } = formData
 
-    return await supabaseAdmin.auth.admin.updateUserById(formData.id, {
-      user_metadata: { ...userMetadata, branch: branch.toString() },
+    return await supabaseAdmin.auth.admin.updateUserById(String(id), {
+      user_metadata: { ...userMetadata },
     })
   }
 
   // Delete User
-  async function deleteUser(id) {
+  async function deleteUser(id: string) {
     return await supabaseAdmin.auth.admin.deleteUser(id)
   }
 
