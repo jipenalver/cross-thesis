@@ -7,7 +7,8 @@ export const initializeFacebookSdk = (): Promise<void> => {
     // Initialize fbAsyncInit
     window.fbAsyncInit = function () {
       FB.init({
-        appId: import.meta.env.VITE_FACEBOOK_ID, // Ensure this matches your .env variable
+        appId: import.meta.env.VITE_FACEBOOK_ID,
+        cookie: true,
         xfbml: true,
         version: 'v21.0',
       })

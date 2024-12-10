@@ -4,7 +4,7 @@ declare global {
   }
 
   const FB: {
-    init: (options: { appId: string; xfbml: boolean; version: string }) => void
+    init: (options: { appId: string; xfbml: boolean; cookie: boolean; version: string }) => void
     AppEvents: {
       logPageView: () => void
     }
