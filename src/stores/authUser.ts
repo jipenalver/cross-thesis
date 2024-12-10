@@ -1,6 +1,7 @@
+import type { AuthError } from '@supabase/supabase-js'
+import { supabase } from '@/utils/supabase'
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { supabase } from '@/utils/supabase'
 
 interface User {
   id: string
@@ -11,10 +12,21 @@ interface User {
   user_role?: string
   is_admin?: boolean
   image_url?: string
+  phone?: string
 }
 
 interface AuthPage {
   page: string
+}
+
+export interface ErrorResponse {
+  error: AuthError
+  data: null
+}
+
+export interface DataResponse {
+  data: User
+  error?: undefined
 }
 
 export const useAuthUserStore = defineStore('authUser', () => {
@@ -89,20 +101,21 @@ export const useAuthUserStore = defineStore('authUser', () => {
   }
 
   // Update User Profile Image
-  async function updateUserImage(file: File) {
+  async function updateUserImage(file: File | null) {
+    if (file == null) return
+
     // Upload the file with the user ID and file extension
     const { data, error } = await supabase.storage
-      .from('shirlix')
+      .from('thesis')
       .upload('avatars/' + userData.value?.id + '-avatar.png', file, {
         cacheControl: '3600',
         upsert: true,
       })
 
-    // Check if it has error
     if (error) return { error }
-    // If no error set data to userData state with the image_url
-    else if (data) {
-      const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
+
+    if (data) {
+      const { data: imageData } = supabase.storage.from('thesis').getPublicUrl(data.path)
       return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })
     }
   }

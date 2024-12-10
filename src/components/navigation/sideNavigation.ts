@@ -1,7 +1,7 @@
 // 👉 Main Navigation; Title, Icon
 export const mainNav = [
   ['User Management', 'mdi-account-box-multiple'],
-  ['Student Management', 'mdi-clipboard-list'],
+  ['Student Management', 'mdi-account-school'],
 ]
 
 // 👉 Sub Navigations; Title, Icon, Subtitle, Redirect Path

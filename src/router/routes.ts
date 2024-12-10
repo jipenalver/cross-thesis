@@ -5,6 +5,7 @@ import StudentLoginView from '@/views/auth/student/login/StudentLoginView.vue'
 import StudentRegisterView from '@/views/auth/student/register/StudentRegisterView.vue'
 import AdminLoginView from '@/views/auth/admin/login/AdminLoginView.vue'
 import DashboardView from '@/views/system/dashboard/DashboardView.vue'
+import AccountSettingsView from '@/views/system/account-settings/AccountSettingsView.vue'
 
 export const routes: Array<RouteRecordRaw> = [
   // Auth
@@ -37,6 +38,12 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/dashboard',
     name: 'dashboard',
     component: DashboardView,
+    meta: { requiresAuth: true, isDefault: true },
+  },
+  {
+    path: '/account/settings',
+    name: 'account-settings',
+    component: AccountSettingsView,
     meta: { requiresAuth: true, isDefault: true },
   },
 
