@@ -79,9 +79,7 @@ export const useAuthUserStore = defineStore('authUser', () => {
       },
     })
 
-    if (error) {
-      return { error }
-    }
+    if (error) return { error }
 
     if (data.user) {
       const { id, email, user_metadata } = data.user
@@ -101,15 +99,10 @@ export const useAuthUserStore = defineStore('authUser', () => {
       })
 
     // Check if it has error
-    if (error) {
-      return { error }
-    }
+    if (error) return { error }
     // If no error set data to userData state with the image_url
     else if (data) {
-      // Retrieve Image Public Url
       const { data: imageData } = supabase.storage.from('shirlix').getPublicUrl(data.path)
-
-      // Update the user information with the new image_url
       return await updateUserInformation({ ...userData.value, image_url: imageData.publicUrl })
     }
   }

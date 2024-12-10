@@ -6,23 +6,17 @@ import { supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
-// Utilize pre-defined vue functions
 const router = useRouter()
 
-// Use Pinia Store
 const authStore = useAuthUserStore()
 
-// Load Variables
 const formAction = ref({
   ...formActionDefault,
 })
 
-// Logout Functionality
 const onLogout = async () => {
-  /// Reset Form Action utils; Turn on processing at the same time
   formAction.value = { ...formActionDefault, formProcess: true }
 
-  // Get supabase logout functionality
   const { error } = await supabase.auth.signOut()
   if (error) {
     console.error('Error during logout:', error)
@@ -30,11 +24,11 @@ const onLogout = async () => {
   }
 
   formAction.value.formProcess = false
-  // Reset State
+
   setTimeout(() => {
     authStore.$reset()
   }, 2500)
-  // Redirect to homepage
+
   router.replace('/')
 }
 </script>
