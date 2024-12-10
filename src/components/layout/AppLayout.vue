@@ -2,6 +2,7 @@
 import TopProfileNavigation from '@/components/navigation/TopProfileNavigation.vue'
 import imgTopNav from '@/assets/images/img-top-nav.png'
 import { useAuthUserStore } from '@/stores/authUser'
+import bgCsu from '@/assets/images/bg-csu.png'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
@@ -67,7 +68,9 @@ onMounted(() => {
       <slot name="navigation"></slot>
 
       <v-main>
-        <slot name="content"></slot>
+        <v-img :src="bgCsu" class="h-screen" cover>
+          <slot name="content"></slot>
+        </v-img>
       </v-main>
 
       <v-footer class="d-flex justify-center" border app>
