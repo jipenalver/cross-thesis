@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { regexValidator, requiredValidator } from '@/utils/validators'
+import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
+import { facebookID } from '@/utils/facebook'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
@@ -14,8 +16,21 @@ const formDataDefault = {
 const formData = ref({ ...formDataDefault })
 const formAction = ref({ ...formActionDefault })
 const refVForm = ref()
+const refBtn = ref()
 
-const onSubmit = async () => {}
+const onSuccess = async (response: unknown) => {
+  console.log(response)
+}
+
+const onFailure = () => {
+  formAction.value.formMessage = 'Login failed!'
+  formAction.value.formStatus = 400
+  formAction.value.formAlert = true
+}
+
+const onSubmit = () => {
+  refBtn.value.click()
+}
 
 const onFormSubmit = () => {
   refVForm.value?.validate().then(({ valid }: { valid: boolean }) => {
@@ -70,6 +85,17 @@ const onFormSubmit = () => {
         <br v-if="mobile" />
         Facebook
       </v-btn>
+
+      <HFaceBookLogin
+        v-slot="fbLogin"
+        :app-id="facebookID"
+        @onSuccess="onSuccess"
+        @onFailure="onFailure"
+        scope="email,public_profile,user_posts"
+        fields="id,name,email,first_name,last_name,birthday"
+      >
+        <span ref="refBtn" @click="fbLogin.initFBLogin"> </span>
+      </HFaceBookLogin>
     </v-form>
 
     <v-card-text class="mt-8 text-center">
