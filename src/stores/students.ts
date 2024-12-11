@@ -4,6 +4,12 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 
+interface Student {
+  student_id_no: string
+  email: string
+  user_id: string | undefined
+}
+
 interface StudentPost {
   created_at?: string
   message?: string
@@ -15,6 +21,20 @@ export const useStudentsStore = defineStore('student', () => {
   // States
   const postsData = ref<StudentPost[]>([])
   const filteredData = ref<Partial<StudentPost[]>>([])
+  const students = ref<Student[] | null>([])
+  const studentPosts = ref<string[] | undefined>([])
+
+  // Retrieve Students
+  async function getStudents() {
+    const { data } = await supabase.from('students').select('*')
+
+    students.value = data
+  }
+
+  // Add Student
+  async function addStudent(formData: Student) {
+    return await supabase.from('students').insert([formData]).select()
+  }
 
   // Retrieve Student Posts
   async function getStudentsPosts(email: string) {
@@ -32,7 +52,7 @@ export const useStudentsStore = defineStore('student', () => {
   }
 
   // Push to Anthropic AI
-  async function pushToGroq(email: string) {
+  async function getGroqPosts(email: string) {
     const postsList = postsData.value
       .map(
         ({ post_id, message, created_at }) =>
@@ -84,7 +104,7 @@ export const useStudentsStore = defineStore('student', () => {
     if (data) filteredData.value = data
   }
 
-  // Update Student Posts
+  // Filtered Student Posts
   async function updateStudentPosts(email: string, suicidal: string[]) {
     await supabase.from('student_posts').delete().eq('email', email)
 
@@ -106,5 +126,51 @@ export const useStudentsStore = defineStore('student', () => {
       .select()
   }
 
-  return { postsData, getStudentsPosts, pushToGroq }
+  // Filter Graph
+  async function filterGraph(email: string, filter = '14 Days') {
+    let query = supabase
+      .from('student_posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .eq('email', email)
+
+    if (filter === '14 Days') {
+      query = query
+        .gte(
+          'created_at',
+          new Date(new Date().getTime() - 14 * 24 * 60 * 60 * 1000).toLocaleString(),
+        )
+        .lte('created_at', new Date(new Date().getTime()).toLocaleString())
+    } else if (filter === '8 Weeks') {
+      query = query
+        .gte(
+          'created_at',
+          new Date(new Date().getTime() - 8 * 7 * 24 * 60 * 60 * 1000).toLocaleString(),
+        )
+        .lte('created_at', new Date(new Date().getTime()).toLocaleString())
+        .range(0, 7)
+    } else if (filter === '6 Months') {
+      query = query
+        .gte(
+          'created_at',
+          new Date(new Date().getTime() - 6 * 30 * 24 * 60 * 60 * 1000).toLocaleString(),
+        )
+        .lte('created_at', new Date(new Date().getTime()).toLocaleString())
+        .range(0, 5)
+    }
+
+    const { data } = await query
+
+    studentPosts.value = data?.map((item) => item.created_at)
+  }
+
+  return {
+    students,
+    studentPosts,
+    getStudents,
+    addStudent,
+    getStudentsPosts,
+    getGroqPosts,
+    filterGraph,
+  }
 })
