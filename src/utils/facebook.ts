@@ -14,9 +14,6 @@ export interface FbResponse {
   status: string
 }
 
-// 👉 Retrieve Facebook ID
-export const facebookID = import.meta.env.VITE_FACEBOOK_ID
-
 // 👉 Retrieve Facebook Init
 export const initializeFacebookSdk = (): Promise<void> => {
   return new Promise<void>((resolve) => {
@@ -43,3 +40,12 @@ export const initializeFacebookSdk = (): Promise<void> => {
     })(document, 'script', 'facebook-jssdk')
   })
 }
+
+// 👉 Retrieve Facebook ID
+export const facebookID = import.meta.env.VITE_FACEBOOK_ID
+
+// 👉 Retrieve Facebook Permissions
+export const permissions = 'email,public_profile,user_posts'
+
+// 👉 Retrieve Facebook Fields
+export const fields = 'id,name,email,first_name,last_name,posts.limit(100)'
