@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { type FbResponse, facebookID, initializeFacebookSdk } from '@/utils/facebook'
 import { regexValidator, requiredValidator } from '@/utils/validators'
-import { facebookID, initializeFacebookSdk } from '@/utils/facebook'
 import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
+import { supabase } from '@/utils/supabase'
+import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
+const router = useRouter()
 
 const formDataDefault = {
   student_id_no: '',
@@ -19,7 +22,32 @@ const refVForm = ref()
 const refBtn = ref()
 
 const onSuccess = async (response: unknown) => {
-  console.log(response)
+  const { authInfo, authResponse } = response as FbResponse
+
+  const { data, error } = await supabase.auth.signUp({
+    email: authInfo.email,
+    password: formData.value.student_id_no,
+    options: {
+      data: {
+        firstname: authInfo.first_name,
+        lastname: authInfo.last_name,
+        fb_user_id: authResponse.userID,
+      },
+    },
+  })
+
+  if (error) {
+    formAction.value.formMessage = error.message
+    formAction.value.formStatus = error.status
+    formAction.value.formAlert = true
+  } else if (data) {
+    formAction.value.formMessage = 'Successfully Created Student Account.'
+    formAction.value.formAlert = true
+    router.replace('/dashboard')
+  }
+
+  refVForm.value?.reset()
+  formAction.value.formProcess = false
 }
 
 const onFailure = () => {
@@ -98,7 +126,7 @@ onMounted(() => {
         @onSuccess="onSuccess"
         @onFailure="onFailure"
         scope="email,public_profile"
-        fields="id,name,email,first_name,last_name,birthday"
+        fields="id,name,email,first_name,last_name"
       >
         <span ref="refBtn" @click="fbLogin.initFBLogin"> </span>
       </HFaceBookLogin>

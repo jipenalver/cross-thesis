@@ -1,3 +1,19 @@
+// 👉 Facebook Response Interface
+export interface FbResponse {
+  authInfo: {
+    email: string
+    first_name: string
+    last_name: string
+  }
+  authResponse: {
+    accessToken: string
+    expiresIn: number
+    signedRequest: string
+    userID: string
+  }
+  status: string
+}
+
 // 👉 Retrieve Facebook ID
 export const facebookID = import.meta.env.VITE_FACEBOOK_ID
 
