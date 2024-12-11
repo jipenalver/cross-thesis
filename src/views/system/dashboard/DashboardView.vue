@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import SideNavigation from '@/components/navigation/SideNavigation.vue'
+import StudentGraph from './partials/StudentGraphWidget.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import StudentGraph from './partials/StudentGraph.vue'
+import WelcomeWidget from './partials/WelcomeWidget.vue'
+import { useAuthUserStore } from '@/stores/authUser'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
 const { mobile } = useDisplay()
+
+const authStore = useAuthUserStore()
 
 const isDrawerVisible = ref(mobile.value ? false : true)
 </script>
@@ -19,7 +23,11 @@ const isDrawerVisible = ref(mobile.value ? false : true)
     <template #content>
       <v-container fluid>
         <v-row>
-          <v-col cols="12">
+          <v-col v-if="authStore.userRole === 'Student'" cols="12">
+            <WelcomeWidget></WelcomeWidget>
+          </v-col>
+
+          <v-col v-else cols="12">
             <StudentGraph></StudentGraph>
           </v-col>
         </v-row>

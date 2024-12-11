@@ -13,6 +13,8 @@ interface AuthUser {
   is_admin?: boolean
   image_url?: string
   phone?: string
+  student_id_no?: string
+  fb_user_id?: string
 }
 
 export interface ErrorResponse {
@@ -41,7 +43,6 @@ export const useAuthUserStore = defineStore('authUser', () => {
     authPages.value = []
   }
 
-  // Actions
   // Retrieve User Session if Logged
   async function isAuthenticated() {
     const { data, error } = await supabase.auth.getSession()
@@ -100,7 +101,6 @@ export const useAuthUserStore = defineStore('authUser', () => {
   async function updateUserImage(file: File | null) {
     if (file == null) return
 
-    // Upload the file with the user ID and file extension
     const { data, error } = await supabase.storage
       .from('thesis')
       .upload('avatars/' + userData.value?.id + '-avatar.png', file, {

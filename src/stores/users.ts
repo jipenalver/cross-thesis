@@ -18,6 +18,8 @@ export const useUsersStore = defineStore('users', () => {
   // States
   const usersTable = ref<Partial<User>[]>([])
   const usersTotal = ref(0)
+  const studentsTable = ref<Partial<User>[]>([])
+  const studentsTotal = ref(0)
 
   // Reset State Action
   function $reset() {
@@ -27,15 +29,24 @@ export const useUsersStore = defineStore('users', () => {
 
   // Retrieve Users
   async function getUsersTable({ page, itemsPerPage }: { page: number; itemsPerPage: number }) {
-    const {
-      data: { users, total },
-    } = (await supabaseAdmin.auth.admin.listUsers({
+    const { data } = await supabaseAdmin.auth.admin.listUsers({
       page: page,
       perPage: itemsPerPage,
-    })) as { data: { users: User[]; total: number } }
+    })
 
-    usersTable.value = users
-    usersTotal.value = total
+    usersTable.value = data.users.filter((user) => user.user_metadata?.user_role !== 'Student')
+    usersTotal.value = usersTable.value.length
+  }
+
+  // Retrieve Students
+  async function getStudentsTable({ page, itemsPerPage }: { page: number; itemsPerPage: number }) {
+    const { data } = await supabaseAdmin.auth.admin.listUsers({
+      page: page,
+      perPage: itemsPerPage,
+    })
+
+    studentsTable.value = data.users.filter((user) => user.user_metadata?.user_role === 'Student')
+    studentsTotal.value = studentsTable.value.length
   }
 
   // Add User
@@ -55,7 +66,7 @@ export const useUsersStore = defineStore('users', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, email, password, ...userMetadata } = formData
 
-    return await supabaseAdmin.auth.admin.updateUserById(String(id), {
+    return await supabaseAdmin.auth.admin.updateUserById(id ?? '', {
       user_metadata: { ...userMetadata },
     })
   }
@@ -65,5 +76,16 @@ export const useUsersStore = defineStore('users', () => {
     return await supabaseAdmin.auth.admin.deleteUser(id)
   }
 
-  return { usersTable, usersTotal, $reset, getUsersTable, addUser, updateUser, deleteUser }
+  return {
+    usersTable,
+    usersTotal,
+    studentsTable,
+    studentsTotal,
+    $reset,
+    getUsersTable,
+    getStudentsTable,
+    addUser,
+    updateUser,
+    deleteUser,
+  }
 })

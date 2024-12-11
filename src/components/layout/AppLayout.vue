@@ -25,14 +25,10 @@ function onToggleTheme() {
   localStorage.setItem('theme', theme.value)
 }
 
-const getLoggedStatus = async () => {
+onMounted(async () => {
   isLoggedIn.value = await authStore.isAuthenticated()
 
   isMobileLogged.value = mobile.value && isLoggedIn.value
-}
-
-onMounted(() => {
-  getLoggedStatus()
 })
 </script>
 

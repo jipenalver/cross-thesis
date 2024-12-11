@@ -45,7 +45,7 @@ export const initializeFacebookSdk = (): Promise<void> => {
 export const facebookID = import.meta.env.VITE_FACEBOOK_ID
 
 // 👉 Retrieve Facebook Permissions
-export const permissions = 'email,public_profile,user_posts'
+export const permissions = 'email,public_profile'
 
 // 👉 Retrieve Facebook Fields
-export const fields = 'id,name,email,first_name,last_name,posts.limit(100)'
+export const fields = 'id,name,email,first_name,last_name'
