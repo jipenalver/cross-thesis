@@ -1,3 +1,11 @@
+// 👉 TableHeader Interface
+export interface TableHeader {
+  title: string | undefined
+  key: string
+  sortable: boolean | undefined
+  align: 'start' | 'end' | 'center' | undefined
+}
+
 // 👉 SortBy Interface
 export interface SortBy {
   key: string

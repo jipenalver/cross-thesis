@@ -71,6 +71,13 @@ const isDrawerVisible = ref(mobile.value ? false : true)
                   </h4>
                   <h4 class="my-2"><b>Email:</b> {{ authStore.userData?.email }}</h4>
                   <h4 class="my-2"><b>Contact No.:</b> {{ authStore.userData?.phone }}</h4>
+
+                  <div v-if="authStore.userRole === 'Student'">
+                    <h4 class="my-2">
+                      <b>Student ID No:</b> {{ authStore.userData?.student_id_no }}
+                    </h4>
+                    <h4 class="my-2"><b>FB ID:</b> {{ authStore.userData?.fb_user_id }}</h4>
+                  </div>
                 </div>
               </v-card-text>
             </v-card>
