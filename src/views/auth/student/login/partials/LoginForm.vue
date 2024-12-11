@@ -21,6 +21,8 @@ const refVForm = ref()
 const refBtn = ref()
 
 const onSuccess = async (response: unknown) => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
   const { authInfo } = response as FbResponse
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -100,6 +102,8 @@ onMounted(() => {
         variant="elevated"
         size="large"
         block
+        :disabled="formAction.formProcess"
+        :loading="formAction.formProcess"
       >
         Login with
         <br v-if="mobile" />
