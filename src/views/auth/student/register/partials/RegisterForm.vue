@@ -22,6 +22,8 @@ const refVForm = ref()
 const refBtn = ref()
 
 const onSuccess = async (response: unknown) => {
+  formAction.value = { ...formActionDefault, formProcess: true }
+
   const { authInfo, authResponse } = response as FbResponse
 
   const { data, error } = await supabase.auth.signUp({
@@ -29,6 +31,7 @@ const onSuccess = async (response: unknown) => {
     password: formData.value.student_id_no,
     options: {
       data: {
+        student_id_no: formData.value.student_id_no,
         firstname: authInfo.first_name,
         lastname: authInfo.last_name,
         fb_user_id: authResponse.userID,
@@ -115,6 +118,8 @@ onMounted(() => {
         variant="elevated"
         size="large"
         block
+        :disabled="formAction.formProcess"
+        :loading="formAction.formProcess"
       >
         Sign Up with
         <br v-if="mobile" />
