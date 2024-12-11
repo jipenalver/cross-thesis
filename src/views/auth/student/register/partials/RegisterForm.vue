@@ -32,6 +32,7 @@ const onSuccess = async (response: unknown) => {
         firstname: authInfo.first_name,
         lastname: authInfo.last_name,
         fb_user_id: authResponse.userID,
+        user_role: 'Student',
       },
     },
   })
@@ -51,7 +52,7 @@ const onSuccess = async (response: unknown) => {
 }
 
 const onFailure = () => {
-  formAction.value.formMessage = 'Login failed!'
+  formAction.value.formMessage = 'Student Registration and Facebook Account linking failed!'
   formAction.value.formStatus = 400
   formAction.value.formAlert = true
 }
