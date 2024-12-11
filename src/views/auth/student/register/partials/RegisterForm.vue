@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { type FbResponse, facebookID, initializeFacebookSdk } from '@/utils/facebook'
+import {
+  type FbResponse,
+  facebookID,
+  fields,
+  initializeFacebookSdk,
+  permissions,
+} from '@/utils/facebook'
 import { regexValidator, requiredValidator } from '@/utils/validators'
 import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
@@ -22,6 +28,8 @@ const refVForm = ref()
 const refBtn = ref()
 
 const onSuccess = async (response: unknown) => {
+  console.log('Facebook Registration Success', response)
+
   formAction.value = { ...formActionDefault, formProcess: true }
 
   const { authInfo, authResponse } = response as FbResponse
@@ -131,8 +139,8 @@ onMounted(() => {
         :app-id="facebookID"
         @onSuccess="onSuccess"
         @onFailure="onFailure"
-        scope="email,public_profile"
-        fields="id,name,email,first_name,last_name"
+        :scope="permissions"
+        :fields="fields"
       >
         <span ref="refBtn" @click="fbLogin.initFBLogin"> </span>
       </HFaceBookLogin>
