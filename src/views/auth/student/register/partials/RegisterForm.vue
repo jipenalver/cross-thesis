@@ -11,6 +11,7 @@ import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
 import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
+import { useStudentsStore } from '@/stores/students'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
@@ -18,6 +19,8 @@ import { onMounted, ref } from 'vue'
 
 const { mobile } = useDisplay()
 const router = useRouter()
+
+const studentsStore = useStudentsStore()
 
 const formDataDefault = {
   student_id_no: '',
@@ -53,6 +56,12 @@ const onSuccess = async (response: unknown) => {
     formAction.value.formStatus = error.status
     formAction.value.formAlert = true
   } else if (data) {
+    await studentsStore.addStudent({
+      student_id_no: formData.value.student_id_no,
+      email: authInfo.email,
+      user_id: data.user?.id,
+    })
+
     formAction.value.formMessage = 'Successfully Created Student Account.'
     formAction.value.formAlert = true
     router.replace('/dashboard')
