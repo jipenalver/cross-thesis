@@ -153,3 +153,10 @@ export const generateCSVTrim = (string: string) => {
 
   return string.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()
 }
+
+// 👉 Parse Object Trimming
+export const objectValueTrim = (string: string) => {
+  if (typeof string !== 'string' || !string.trim()) return ''
+
+  return string.replace(/\s+/g, ' ').trim()
+}

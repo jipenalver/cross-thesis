@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useStudentsStore } from '@/stores/students'
+import { onMounted } from 'vue'
+
+const studentsStore = useStudentsStore()
+
 // Categories
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lastSixMonths = ['July', 'August', 'September', 'October', 'November', 'December']
@@ -97,6 +102,11 @@ const series = [
     data: [1, 0, 0, 0, 0, 21, 13],
   },
 ]
+
+onMounted(async () => {
+  await studentsStore.getStudentsPosts('jianchris2k14@gmail.com')
+  await studentsStore.pushToGroq('jianchris2k14@gmail.com')
+})
 </script>
 
 <template>
