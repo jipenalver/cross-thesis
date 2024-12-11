@@ -89,7 +89,7 @@ const isDrawerVisible = ref(mobile.value ? false : true)
               </v-card-text>
             </v-card>
 
-            <v-card class="mb-5" title="Change Password">
+            <v-card v-if="authStore.userRole !== 'Student'" class="mb-5" title="Change Password">
               <v-card-text>
                 <PasswordForm></PasswordForm>
               </v-card-text>

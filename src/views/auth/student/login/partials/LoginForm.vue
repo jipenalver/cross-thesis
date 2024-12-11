@@ -9,6 +9,7 @@ import {
 import { regexValidator, requiredValidator } from '@/utils/validators'
 import { HFaceBookLogin } from '@healerlab/vue3-facebook-login'
 import { formActionDefault } from '@/utils/helpers/form'
+import AppAlert from '@/components/common/AppAlert.vue'
 import logoLogin from '@/assets/images/logo-login.png'
 import { supabase } from '@/utils/supabase'
 import { useRouter } from 'vue-router'
@@ -76,6 +77,12 @@ onMounted(() => {
 </script>
 
 <template>
+  <AppAlert
+    v-model:is-alert-visible="formAction.formAlert"
+    :form-message="formAction.formMessage"
+    :form-status="formAction.formStatus"
+  ></AppAlert>
+
   <v-img class="mx-auto my-6" max-width="228" :src="logoLogin"></v-img>
 
   <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
