@@ -1,28 +1,52 @@
 <script setup lang="ts">
 import { useStudentsStore } from '@/stores/students'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const studentsStore = useStudentsStore()
 
-// Categories
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const lastSixMonths = ['July', 'August', 'September', 'October', 'November', 'December']
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const lastTwelveMonths = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-const last7Days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const graphFilter = ref({
+  category: '14 Days',
+})
+const resetKey = ref(0)
+
+function countDateOccurrences(dates: string[]): number[] {
+  const dateCounts: number[] = []
+
+  const lastElevenDays = getLastNDays()
+  lastElevenDays.forEach((date) => {
+    const count = dates.filter((d) => d.startsWith(date)).length
+    dateCounts.push(count)
+  })
+
+  return dateCounts.reverse()
+}
+
+// const getLastNMonths = (length = 6) => {
+//   const today = new Date()
+//   return Array.from({ length }, (_, i) => {
+//     const monthStart = new Date(today.getFullYear(), today.getMonth() - i, 1)
+//     return monthStart.toISOString().split('T')[0]
+//   }).reverse()
+// }
+
+// const getLastNWeeks = (length = 8) => {
+//   const today = new Date()
+//   const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000)
+
+//   return Array.from({ length }, (_, i) => {
+//     const date = new Date(weekStart.getTime() - i * 7 * 24 * 60 * 60 * 1000)
+//     return date.toISOString().split('T')[0]
+//   }).reverse()
+// }
+
+const getLastNDays = (length = 14) => {
+  const today = new Date()
+  today.setDate(today.getDate() + 1)
+  return Array.from(
+    { length },
+    (_, i) => new Date(today.getTime() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  )
+}
 
 // Options
 const options = {
@@ -56,7 +80,7 @@ const options = {
   },
   xaxis: {
     type: 'category',
-    categories: last7Days,
+    categories: getLastNDays(),
     labels: {
       style: {
         colors: '#C62828',
@@ -88,45 +112,59 @@ const options = {
   },
 }
 
-const series = [
-  {
-    name: 'Student 1',
-    data: [21, 22, 10, 28, 16, 21, 13],
-  },
-  {
-    name: 'Student 2',
-    data: [1, 22, 10, 2, 16, 21, 13],
-  },
-  {
-    name: 'Student 3',
-    data: [1, 0, 0, 0, 0, 21, 13],
-  },
-]
+const series = ref<{ name: string; data: number[] }[]>([])
+
+const updateGraph = async () => {
+  if (!studentsStore.students) return
+
+  for (let i = 0; i < studentsStore.students.length; i++) {
+    await studentsStore.getStudentsPosts(studentsStore.students[i].email)
+    await studentsStore.getGroqPosts(studentsStore.students[i].email)
+    await studentsStore.filterGraph(studentsStore.students[i].email)
+
+    series.value.push({
+      name: studentsStore.students[i].email,
+      data: countDateOccurrences(studentsStore.studentPosts ?? []),
+    })
+  }
+
+  resetKey.value++
+}
 
 onMounted(async () => {
-  await studentsStore.getStudentsPosts('jianchris2k14@gmail.com')
-  await studentsStore.pushToGroq('jianchris2k14@gmail.com')
+  if (studentsStore.students?.length == 0) await studentsStore.getStudents()
+  await updateGraph()
 })
 </script>
 
 <template>
-  <v-card title="Student Ideation Graph" subtitle="Occurence in the Last 7 days">
+  <v-card
+    title="Student Suicide Ideation Graph"
+    :subtitle="graphFilter.category ? `Occurence in the Last ${graphFilter.category}` : undefined"
+  >
     <template #append>
       <v-select
+        v-model="graphFilter.category"
         min-width="250px"
-        prepend-inner-icon="mdi-calendar"
-        :items="['Last 7 Days', 'Last 14 Days', 'Last 4 Weeks', 'Last 8 Weeks', 'Last 6 Months']"
+        prepend-icon="mdi-calendar"
+        prefix="Last"
+        :items="['14 Days', '8 Weeks', '6 Months']"
         density="compact"
-        label="Filter"
-        item-title="name"
-        item-value="id"
+        label="Filter Range"
         variant="outlined"
         clearable
+        @update:model-value="updateGraph"
       ></v-select>
     </template>
 
     <v-card-text>
-      <apexchart type="line" width="100%" :options="options" :series="series"></apexchart>
+      <apexchart
+        :key="resetKey"
+        type="line"
+        width="100%"
+        :options="options"
+        :series="series"
+      ></apexchart>
     </v-card-text>
   </v-card>
 </template>
