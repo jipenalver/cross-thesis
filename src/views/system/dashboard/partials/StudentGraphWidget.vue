@@ -72,17 +72,20 @@ const series = ref<{ name: string; data: number[] }[]>([])
 const updateGraph = async () => {
   if (!studentsStore.students) return
 
-  for (let i = 0; i < studentsStore.students.length; i++) {
-    await studentsStore.getStudentsPosts(studentsStore.students[i].email)
-    await studentsStore.getGroqPosts(studentsStore.students[i].email)
-    await studentsStore.filterGraph(studentsStore.students[i].email)
+  const updatedSeries = await Promise.all(
+    studentsStore.students.map(async (student) => {
+      await studentsStore.getStudentsPosts(student.email)
+      await studentsStore.getGroqPosts(student.email)
+      await studentsStore.filterGraph(student.email)
 
-    series.value.push({
-      name: studentsStore.students[i].email,
-      data: countDateOccurrences(studentsStore.studentPosts ?? []),
-    })
-  }
+      return {
+        name: student.student_id_no,
+        data: countDateOccurrences(studentsStore.studentPosts ?? []),
+      }
+    }),
+  )
 
+  series.value = updatedSeries
   resetKey.value++
 }
 
