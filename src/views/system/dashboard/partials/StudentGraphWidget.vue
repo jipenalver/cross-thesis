@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import {
+  countDateOccurrences,
+  countMonthlyOccurrences,
+  countWeeklyOccurrences,
+  daysOptions,
+  monthsOptions,
+  weeksOptions,
+} from './studentGraphUtils'
 import { useStudentsStore } from '@/stores/students'
 import { onMounted, ref } from 'vue'
-import { otherOptions } from './studentGraphUtils'
 
 const studentsStore = useStudentsStore()
 
@@ -9,63 +16,6 @@ const graphFilter = ref({
   category: '14 Days',
 })
 const resetKey = ref(0)
-
-function countDateOccurrences(dates: string[]): number[] {
-  const dateCounts: number[] = []
-
-  const lastElevenDays = getLastNDays()
-  lastElevenDays.forEach((date) => {
-    const count = dates.filter((d) => d.startsWith(date)).length
-    dateCounts.push(count)
-  })
-
-  return dateCounts.reverse()
-}
-
-const getLastNDays = (length = 14) => {
-  const today = new Date()
-  today.setDate(today.getDate() + 1)
-  return Array.from(
-    { length },
-    (_, i) => new Date(today.getTime() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  )
-}
-
-const options = {
-  ...otherOptions,
-  xaxis: {
-    type: 'category',
-    categories: getLastNDays(),
-    labels: {
-      style: {
-        colors: '#C62828',
-        fontSize: '12px',
-        fontWeight: 'bold',
-      },
-    },
-    title: {
-      text: 'Students',
-      style: {
-        color: '#C62828',
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      style: {
-        colors: '#C62828',
-        fontSize: '14px',
-        fontWeight: 'bold',
-      },
-    },
-    title: {
-      text: 'Occurence',
-      style: {
-        color: '#C62828',
-      },
-    },
-  },
-}
 
 const series = ref<{ name: string; data: number[] }[]>([])
 
@@ -76,11 +26,18 @@ const updateGraph = async () => {
     studentsStore.students.map(async (student) => {
       await studentsStore.getStudentsPosts(student.email)
       await studentsStore.getGroqPosts(student.email)
-      await studentsStore.filterGraph(student.email)
+      await studentsStore.filterGraph(student.email, graphFilter.value.category)
+
+      const studentData =
+        graphFilter.value.category === '14 Days'
+          ? countDateOccurrences(studentsStore.studentPosts ?? [])
+          : graphFilter.value.category === '8 Weeks'
+            ? countWeeklyOccurrences(studentsStore.studentPosts ?? [])
+            : countMonthlyOccurrences(studentsStore.studentPosts ?? [])
 
       return {
         name: student.student_id_no,
-        data: countDateOccurrences(studentsStore.studentPosts ?? []),
+        data: studentData,
       }
     }),
   )
@@ -117,10 +74,29 @@ onMounted(async () => {
 
     <v-card-text>
       <apexchart
+        v-if="graphFilter.category === '14 Days'"
         :key="resetKey"
         type="line"
         width="100%"
-        :options="options"
+        :options="daysOptions"
+        :series="series"
+      ></apexchart>
+
+      <apexchart
+        v-if="graphFilter.category === '8 Weeks'"
+        :key="resetKey"
+        type="line"
+        width="100%"
+        :options="weeksOptions"
+        :series="series"
+      ></apexchart>
+
+      <apexchart
+        v-if="graphFilter.category === '6 Months'"
+        :key="resetKey"
+        type="line"
+        width="100%"
+        :options="monthsOptions"
         :series="series"
       ></apexchart>
     </v-card-text>
