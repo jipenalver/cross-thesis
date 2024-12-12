@@ -15,9 +15,16 @@ const studentsStore = useStudentsStore()
 const graphFilter = ref({
   category: '14 Days',
 })
-const resetKey = ref(0)
+const isGraphLoading = ref(false)
 
 const series = ref<{ name: string; data: number[] }[]>([])
+
+const onRefresh = async () => {
+  isGraphLoading.value = true
+  await studentsStore.getStudents()
+  await updateGraph()
+  isGraphLoading.value = false
+}
 
 const updateGraph = async () => {
   if (!studentsStore.students) return
@@ -43,7 +50,6 @@ const updateGraph = async () => {
   )
 
   series.value = updatedSeries
-  resetKey.value++
 }
 
 onMounted(async () => {
@@ -58,24 +64,40 @@ onMounted(async () => {
     :subtitle="graphFilter.category ? `Occurence in the Last ${graphFilter.category}` : undefined"
   >
     <template #append>
-      <v-select
-        v-model="graphFilter.category"
-        min-width="250px"
-        prepend-icon="mdi-calendar"
-        prefix="Last"
-        :items="['14 Days', '8 Weeks', '6 Months']"
-        density="compact"
-        label="Filter Range"
-        variant="outlined"
-        clearable
-        @update:model-value="updateGraph"
-      ></v-select>
+      <div class="d-flex align-center">
+        <v-select
+          v-model="graphFilter.category"
+          min-width="250px"
+          prepend-icon="mdi-calendar"
+          prefix="Last"
+          :items="['14 Days', '8 Weeks', '6 Months']"
+          density="compact"
+          label="Filter Range"
+          variant="outlined"
+          clearable
+          hide-details
+          :loading="isGraphLoading"
+          :disabled="isGraphLoading"
+          @update:model-value="updateGraph"
+        ></v-select>
+
+        <v-btn
+          class="ms-2"
+          density="comfortable"
+          color="green-darken-4"
+          @click="onRefresh"
+          :loading="isGraphLoading"
+          :disabled="isGraphLoading"
+          icon
+        >
+          <v-icon icon="mdi-refresh"></v-icon>
+        </v-btn>
+      </div>
     </template>
 
     <v-card-text>
       <apexchart
         v-if="graphFilter.category === '14 Days'"
-        :key="resetKey"
         type="line"
         width="100%"
         :options="daysOptions"
@@ -84,7 +106,6 @@ onMounted(async () => {
 
       <apexchart
         v-if="graphFilter.category === '8 Weeks'"
-        :key="resetKey"
         type="line"
         width="100%"
         :options="weeksOptions"
@@ -93,7 +114,6 @@ onMounted(async () => {
 
       <apexchart
         v-if="graphFilter.category === '6 Months'"
-        :key="resetKey"
         type="line"
         width="100%"
         :options="monthsOptions"
