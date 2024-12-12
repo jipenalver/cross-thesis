@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import {
+  countDateOccurrences,
+  countMonthlyOccurrences,
+  countWeeklyOccurrences,
+  daysOptions,
+  monthsOptions,
+  weeksOptions,
+} from './studentGraphUtils'
 import { useStudentsStore } from '@/stores/students'
 import { onMounted, ref } from 'vue'
 
@@ -9,125 +17,32 @@ const graphFilter = ref({
 })
 const resetKey = ref(0)
 
-function countDateOccurrences(dates: string[]): number[] {
-  const dateCounts: number[] = []
-
-  const lastElevenDays = getLastNDays()
-  lastElevenDays.forEach((date) => {
-    const count = dates.filter((d) => d.startsWith(date)).length
-    dateCounts.push(count)
-  })
-
-  return dateCounts.reverse()
-}
-
-// const getLastNMonths = (length = 6) => {
-//   const today = new Date()
-//   return Array.from({ length }, (_, i) => {
-//     const monthStart = new Date(today.getFullYear(), today.getMonth() - i, 1)
-//     return monthStart.toISOString().split('T')[0]
-//   }).reverse()
-// }
-
-// const getLastNWeeks = (length = 8) => {
-//   const today = new Date()
-//   const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000)
-
-//   return Array.from({ length }, (_, i) => {
-//     const date = new Date(weekStart.getTime() - i * 7 * 24 * 60 * 60 * 1000)
-//     return date.toISOString().split('T')[0]
-//   }).reverse()
-// }
-
-const getLastNDays = (length = 14) => {
-  const today = new Date()
-  today.setDate(today.getDate() + 1)
-  return Array.from(
-    { length },
-    (_, i) => new Date(today.getTime() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-  )
-}
-
-// Options
-const options = {
-  chart: {
-    height: 350,
-    type: 'line',
-    toolbar: {
-      show: false,
-    },
-    zoom: {
-      enabled: false,
-    },
-  },
-  colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
-  plotOptions: {
-    line: {
-      isSlopeChart: false,
-    },
-  },
-  stroke: {
-    curve: 'straight',
-  },
-  dataLabels: {
-    enabled: true,
-  },
-  legend: {
-    show: true,
-    labels: {
-      colors: '#C62828',
-    },
-  },
-  xaxis: {
-    type: 'category',
-    categories: getLastNDays(),
-    labels: {
-      style: {
-        colors: '#C62828',
-        fontSize: '12px',
-        fontWeight: 'bold',
-      },
-    },
-    title: {
-      text: 'Students',
-      style: {
-        color: '#C62828',
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      style: {
-        colors: '#C62828',
-        fontSize: '14px',
-        fontWeight: 'bold',
-      },
-    },
-    title: {
-      text: 'Occurence',
-      style: {
-        color: '#C62828',
-      },
-    },
-  },
-}
-
 const series = ref<{ name: string; data: number[] }[]>([])
 
 const updateGraph = async () => {
   if (!studentsStore.students) return
 
-  for (let i = 0; i < studentsStore.students.length; i++) {
-    await studentsStore.getStudentsPosts(studentsStore.students[i].email)
-    await studentsStore.getGroqPosts(studentsStore.students[i].email)
-    await studentsStore.filterGraph(studentsStore.students[i].email)
+  const updatedSeries = await Promise.all(
+    studentsStore.students.map(async (student) => {
+      await studentsStore.getStudentsPosts(student.email)
+      await studentsStore.getGroqPosts(student.email)
+      await studentsStore.filterGraph(student.email, graphFilter.value.category)
 
-    series.value.push({
-      name: studentsStore.students[i].email,
-      data: countDateOccurrences(studentsStore.studentPosts ?? []),
-    })
-  }
+      const studentData =
+        graphFilter.value.category === '14 Days'
+          ? countDateOccurrences(studentsStore.studentPosts ?? [])
+          : graphFilter.value.category === '8 Weeks'
+            ? countWeeklyOccurrences(studentsStore.studentPosts ?? [])
+            : countMonthlyOccurrences(studentsStore.studentPosts ?? [])
 
+      return {
+        name: student.student_id_no,
+        data: studentData,
+      }
+    }),
+  )
+
+  series.value = updatedSeries
   resetKey.value++
 }
 
@@ -159,10 +74,29 @@ onMounted(async () => {
 
     <v-card-text>
       <apexchart
+        v-if="graphFilter.category === '14 Days'"
         :key="resetKey"
         type="line"
         width="100%"
-        :options="options"
+        :options="daysOptions"
+        :series="series"
+      ></apexchart>
+
+      <apexchart
+        v-if="graphFilter.category === '8 Weeks'"
+        :key="resetKey"
+        type="line"
+        width="100%"
+        :options="weeksOptions"
+        :series="series"
+      ></apexchart>
+
+      <apexchart
+        v-if="graphFilter.category === '6 Months'"
+        :key="resetKey"
+        type="line"
+        width="100%"
+        :options="monthsOptions"
         :series="series"
       ></apexchart>
     </v-card-text>
