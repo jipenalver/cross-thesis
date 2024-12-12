@@ -67,7 +67,7 @@ export const getLastNDays = (length = 14) => {
   ).reverse()
 }
 
-export const getLastNWeeks = (length = 8): string[] => {
+export const getLastNWeeks = (length = 8) => {
   const today = new Date()
   const weekStart = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000)
 
@@ -79,7 +79,7 @@ export const getLastNWeeks = (length = 8): string[] => {
   }).reverse()
 }
 
-export const getLastNMonths = (length = 6): string[] => {
+export const getLastNMonths = (length = 6) => {
   const today = new Date()
   return Array.from({ length }, (_, i) => {
     const monthIndex = (today.getMonth() - i + 12) % 12
@@ -162,7 +162,7 @@ export const countDateOccurrences = (dates: string[]) => {
   return dateCounts
 }
 
-export const countWeeklyOccurrences = (dates: string[]): number[] => {
+export const countWeeklyOccurrences = (dates: string[]) => {
   const weekCounts: number[] = []
 
   const lastNWeeks = getLastNWeeks()
@@ -180,7 +180,7 @@ export const countWeeklyOccurrences = (dates: string[]): number[] => {
   return weekCounts
 }
 
-export const countMonthlyOccurrences = (dates: string[]): number[] => {
+export const countMonthlyOccurrences = (dates: string[]) => {
   const monthCounts: number[] = []
 
   const lastNMonths = getLastNMonths()
